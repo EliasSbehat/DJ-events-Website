@@ -19,6 +19,8 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/cvlist', 'cv');
     Route::get('/signin/checkuser', 'checkuser');
     Route::get('/register', 'signup');
+    Route::post('/register/register', 'register');
+    Route::get('/verify', 'verify');
     
     
 });

@@ -121,6 +121,8 @@ return [
 
     'key' => env('APP_KEY'),
 
+    'sms_key' => env('SMS_API_KEY'),
+
     'cipher' => 'AES-256-CBC',
 
     /*
