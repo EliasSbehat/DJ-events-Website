@@ -184,11 +184,11 @@ class MainController extends Controller
         $email = new TestMail(
             $sender = session('email'),
             $subject = 'Request E-mail',
-            $body = session('name') ." - ". $requestData['singer'] .  "\n has requested:" . $requestData['artist'] . " - " . $requestData['title'] ."\n" . $requestData['dj'] ."\n" .$currentDate
+            $body = session('name') ." - ". $requestData['singer'] .  "<br> has requested:" . $requestData['artist'] . " - " . $requestData['title'] ."<br>" . $requestData['dj'] ."<br>" .$currentDate
         );
 
         // When: we receive that e-mail
-        Mail::to('topdev928@gmail.com')->send($email);
+        Mail::to('nick@djnickburrett.com')->send($email);
 
         DB::table('request')->insert([
             'song_id' => $requestData['id'],
