@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
+use Illuminate\Http\Request;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,11 +18,20 @@ use App\Http\Controllers\MainController;
 Route::controller(MainController::class)->group(function () {
     Route::get('/', 'signin');
     Route::get('/signin', 'signin');
-    Route::get('/cvlist', 'cv');
     Route::get('/signin/checkuser', 'checkuser');
     Route::get('/register', 'signup');
     Route::post('/register/register', 'register');
     Route::get('/verify', 'verify');
+    Route::get('/verify/code', 'verifyCode');
+    Route::get('/check', 'check');
+    Route::get('/logout', 'logout');
+    Route::get('/songs', 'songs');
+    Route::get('/songmng', 'songmng');
+    Route::post('/songmng/add', 'songAdd');
+    Route::get('/songmng/add-song', 'songAddSingle');
+    Route::get('/songmng/delete-song', 'songDelete');
+    Route::get('/songmng/get', 'songGet');
+    
     
     
 });

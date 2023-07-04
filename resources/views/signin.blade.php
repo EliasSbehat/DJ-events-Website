@@ -18,16 +18,17 @@
                     </div>
                     <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
                         <form>
-                        <!-- Email input -->
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                            <!-- Email input -->
                             <div class="mb-4">
-                                <label class="form-label" for="form1Example13">Email address</label>
-                                <input type="email" id="form1Example13" class="form-control form-control-lg" />
+                                <label class="form-label" for="email">Email address</label>
+                                <input type="email" id="email" class="form-control form-control-lg" />
                             </div>
 
                             <!-- Password input -->
                             <div class="mb-4">
-                                <label class="form-label" for="form1Example23">Password</label>
-                                <input type="password" id="form1Example23" class="form-control form-control-lg" />
+                                <label class="form-label" for="password">Password</label>
+                                <input type="password" id="password" class="form-control form-control-lg" />
                             </div>
 
                             <div class="d-flex justify-content-around align-items-center mb-4">
@@ -39,7 +40,7 @@
                             </div>
 
                             <!-- Submit button -->
-                            <button type="submit" class="btn btn-primary btn-lg btn-block">Sign in</button>
+                            <button type="button" class="btn btn-primary signin-btn btn-lg btn-block">Sign in</button>
 
                                             <!-- Register buttons -->
                             <div class="text-center mt-4">
@@ -55,34 +56,35 @@
 
     <!-- Bootstrap core JavaScript-->
     <script>
-        $(".signin_btn").click(function() {
+        $(".signin-btn").click(function() {
             signIn();
         });
-        $("#pwd").keypress(function() {
+        $("#password").keypress(function() {
             if (event.keyCode==13) {
                 signIn();
             }
         });
 
         function signIn() {
-            var name = $("#username").val();
-            var pwd = $("#pwd").val();
+            var email = $("#email").val();
+            var pwd = $("#password").val();
             $.get(
                 "signin/checkuser", {
-                    n: name, //name
+                    n: email, //name
                     p: pwd //pwd
                 },
                 function(res) {
                     if (res == "wrong user") {
                         alert("The user name is wrong.");
-                        $("#username").focus();
+                        $("#email").focus();
                     } else if (res == "wrong pwd") {
                         alert("The password is wrong.");
-                        $("#pwd").focus();
+                        $("#password").focus();
+                    } else if (res == "not verified") {
+                        alert("Not verified");
                     } else {
                         sessionStorage.setItem("x-t", res);
-                        sessionStorage.setItem("user", name);
-                        location.href = 'cvlist';
+                        location.href = '/songs';
                     }
                 }
             );

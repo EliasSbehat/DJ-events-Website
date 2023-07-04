@@ -15,8 +15,7 @@
             <div class="container py-5 h-100">
                 <div class="row d-flex justify-content-center align-items-center h-100">
                     <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-                        <form id="register_form" action="/register/register" method="POST">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                        <!-- <form> -->
                             <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
                                 <p class="lead fw-normal mb-0 me-3">SMS Verify</p>
                             </div>
@@ -36,10 +35,10 @@
                                 <input type="text" id="verify_input" name="verify_code" class="form-control form-control-lg" required placeholder="Enter a valid verify code" />
                             </div>
                             <div class="text-center text-lg-start mt-4 pt-2">
-                                <button type="submit" class="btn btn-primary register-btn btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">Confirm</button>
+                                <button type="button" class="btn btn-primary confirm-btn btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">Confirm</button>
                             </div>
 
-                        </form>
+                        <!-- </form> -->
                     </div>
                 </div>
             </div>
@@ -49,12 +48,22 @@
 
     <!-- Bootstrap core JavaScript-->
     <script>
-        const phoneInputField = document.querySelector("#userphone");
-        const phoneInput = window.intlTelInput(phoneInputField, {
-            utilsScript:
-                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        $(".confirm-btn").click(function(){
+            var verify_code = $("[name=verify_code]").val();
+            $.get(
+                "/verify/code", {
+                    code: verify_code
+                }, function (res) {
+                    console.log(res);
+                    if (res=="invalid") {
+                        alert("Invalid Code");
+                    } else if (res=="success") {
+                        alert("Success");
+                        location.href="/signin";
+                    }
+                }
+            )
         });
-        var phone = phoneInput.getNumber();
     </script>
 </body>
 
