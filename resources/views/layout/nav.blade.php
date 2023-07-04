@@ -22,10 +22,10 @@
                 <!-- Left links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Songs</a>
+                        <a class="nav-link" href="/songlist">Songs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Song Request</a>
+                        <a class="nav-link" href="/requested">Requested Song</a>
                     </li>
                     @if (session('role')==1)
                     <li class="nav-item song-mng">
@@ -40,9 +40,9 @@
             <!-- Right elements -->
             <div class="d-flex align-items-center">
             <!-- Icon -->
-                <a class="text-reset me-3" href="#">
+                <!-- <a class="text-reset me-3" href="#">
                     <i class="fas fa-shopping-cart"></i>
-                </a>
+                </a> -->
 
                 <!-- Avatar -->
                 <div class="dropdown">

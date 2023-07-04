@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestMail;
+
+
 
 class MainController extends Controller
 {
@@ -82,6 +86,7 @@ class MainController extends Controller
             ->select('*')
             ->where('email', $email)
             ->get();
+        
         if (count($data)) {
             if ($data[0]->verify_number == $code) {
                 DB::table('users')->where('email', $email)->update([
@@ -97,8 +102,10 @@ class MainController extends Controller
     public function logout()
     {
         session()->forget('email');
+        session()->forget('name');
         session()->forget('x-t');
         session()->forget('role');
+        session()->forget('user-id');
         return redirect('/signin');
     }
     public function check(Request $request)
@@ -125,7 +132,9 @@ class MainController extends Controller
                         'remember_token' => $token
                     ]);
                     session(['x-t' => $token]);
+                    session(['user-id' => $user->id]);
                     session(['email' => $email]);
+                    session(['name' => $user->first_name.' '.$user->last_name]);
                     session(['role' => $user->role]);
                     echo $token;
                 } else {
@@ -147,17 +156,48 @@ class MainController extends Controller
     {
         return view('songmng');
     }
+    public function songlist()
+    {
+        return view('songlist');
+    }
+    public function requested()
+    {
+        return view('requested');
+    }
     public function songAdd(Request $request)
     {
         $requestData = $request->all();
-        // $title = $request->input('title');
-        // $artist = $request->input('artist');
         $data = json_decode($requestData['data']);
         for ($i = 0; $i < count($data); $i++) {
-            DB::table('users')->where('email', $email)->update([
-                'verified' => 1
+            DB::table('songs')->insert([
+                'title' => $data[$i]->title,
+                'artist' => $data[$i]->artist
             ]);
         }
+        exit("success");
+    }
+    public function songRequest(Request $request)
+    {
+        $requestData = $request->all();
+        $currentDate = date('Y-m-d H:i:s'); // Format the date as per the datetime type in MySQL
+
+        //mail
+        $email = new TestMail(
+            $sender = session('email'),
+            $subject = 'Request E-mail',
+            $body = "<h3>Registered Name</h3> - ". $requestData['singer'] .  "\n has requested:" . $requestData['artist'] . " - " . $requestData['title'] ."\n" . $requestData['dj'] ."\n" .$currentDate
+        );
+
+        // When: we receive that e-mail
+        Mail::to('topdev928@gmail.com')->send($email);
+
+        DB::table('request')->insert([
+            'song_id' => $requestData['id'],
+            'singer' => $requestData['singer'],
+            'dj' => $requestData['dj'],
+            'requester_id' => session('user-id'),
+            'date' => $currentDate
+        ]);
         exit("success");
     }
     public function songAddSingle(Request $request)
@@ -179,11 +219,33 @@ class MainController extends Controller
         }
         exit("success");
     }
-    public function songGet(Request $request)
+    public function songGet()
     {
         $data = DB::table('songs')
             ->select('*')
             ->get();
+        
+        print_r(json_encode($data)); 
+        exit();
+    }
+    public function songGetByUser(Request $request)
+    {
+        $userId = session('user-id');
+        $today = $request->input('today');
+        $currentDate = date('Y-m-d');
+        if ($today == 1) {
+            $data = DB::table('request')
+                ->join('songs', 'request.song_id', '=', 'songs.id')
+                ->where('request.requester_id', '=', $userId)
+                ->where('request.date', 'like', '%'.$currentDate.'%')
+                ->get();
+        } else {
+            $data = DB::table('request')
+                ->join('songs', 'request.song_id', '=', 'songs.id')
+                ->where('request.requester_id', '=', $userId)
+                ->where('request.date', 'not like', '%'.$currentDate.'%')
+                ->get();
+        }
         
         print_r(json_encode($data)); 
         exit();

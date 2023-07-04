@@ -84,7 +84,7 @@
                         alert("Not verified");
                     } else {
                         sessionStorage.setItem("x-t", res);
-                        location.href = '/songs';
+                        location.href = '/songlist';
                     }
                 }
             );

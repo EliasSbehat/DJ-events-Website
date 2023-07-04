@@ -30,8 +30,9 @@ Route::controller(MainController::class)->group(function () {
     Route::post('/songmng/add', 'songAdd');
     Route::get('/songmng/add-song', 'songAddSingle');
     Route::get('/songmng/delete-song', 'songDelete');
+    Route::get('/songmng/request-song', 'songRequest');
     Route::get('/songmng/get', 'songGet');
-    
-    
-    
+    Route::get('/songmng/getByUser', 'songGetByUser');
+    Route::get('/songlist', 'songlist');
+    Route::get('/requested', 'requested');
 });
