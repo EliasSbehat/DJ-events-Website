@@ -43,9 +43,9 @@
                             <button type="button" class="btn btn-primary signin-btn btn-lg btn-block">Sign in</button>
 
                                             <!-- Register buttons -->
-                            <div class="text-center mt-4">
-                                <p>Not a member? <a href="/register">Register</a></p>
-                            </div>
+                            <!-- <div class="text-center mt-4"> -->
+                                <!-- <p>Not a member? <a href="/register">Register</a></p> -->
+                            <!-- </div> -->
                         </form>
                     </div>
                 </div>

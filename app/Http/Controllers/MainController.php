@@ -130,42 +130,51 @@ class MainController extends Controller
             $phone = substr($phone, 1);
         }
         $user = DB::table('users')->where('phone', $phone)->first();
+        if (!$user) {
+            DB::table('users')->insert([
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'phone' => $phone
+            ]);
+        }
+        $user = DB::table('users')->where('phone', $phone)->first();
+
         $token = Hash::make($phone . "_@123Col_" . $first_name . time());
         $randomNumber = mt_rand(1000, 9999);
         $sms_api_key = config('app.sms_key');
         if ($user) {
-            if ($user->verified) {
-                DB::table('users')->where('phone', $phone)->update([
-                    'remember_token' => $token,
-                    'verify_number' => $randomNumber
-                ]);
-                session(['x-t' => $token]);
-                session(['user-id' => $user->id]);
-                session(['phone' => $phone]);
-                session(['name' => $user->first_name.' '.$user->last_name]);
-                session(['role' => $user->role]);
+            // if ($user->verified) {
+            DB::table('users')->where('phone', $phone)->update([
+                'remember_token' => $token,
+                'verify_number' => $randomNumber
+            ]);
+            session(['x-t' => $token]);
+            session(['user-id' => $user->id]);
+            session(['phone' => $phone]);
+            session(['name' => $user->first_name.' '.$user->last_name]);
+            session(['role' => $user->role]);
 
 
-                $numbers = array($phone);
-                $sender = urlencode('karaokedj');
-                $message = rawurlencode($randomNumber);
-            
-                $numbers = implode(',', $numbers);
-            
-                $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
-            
-                // Send the POST request with cURL
-                $ch = curl_init('https://api.txtlocal.com/send/');
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $response = curl_exec($ch);
-                curl_close($ch);
+            $numbers = array($phone);
+            $sender = urlencode('karaokedj');
+            $message = rawurlencode($randomNumber);
+        
+            $numbers = implode(',', $numbers);
+        
+            $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
+        
+            // Send the POST request with cURL
+            $ch = curl_init('https://api.txtlocal.com/send/');
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
 
-                echo $token;
-            } else {
-                echo "not verified";
-            }
+            echo $token;
+            // } else {
+            //     echo "not verified";
+            // }
         } else {
             echo "wrong user";
         }
