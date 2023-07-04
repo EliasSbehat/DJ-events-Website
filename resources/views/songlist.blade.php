@@ -3,6 +3,7 @@
 
 <head>
     @include('layout.head')
+    <title>Song List</title>
 </head>
 
 <body>
@@ -88,9 +89,14 @@
                     dj: dj
                 }, function (res) {
                     hideLoading();
-                    $('#request').modal('hide');
-                    $("#make_dj").val('');
-                    $("#song_id").val('');
+                    if (res=="turnoff") {
+                        alert("The song is not available for request at the moment");
+                    } else {
+                        $('#request').modal('hide');
+                        $("#make_dj").val('');
+                        $("#song_id").val('');
+                        alert("Thank you for your song request");
+                    }
                 }
             );
         });

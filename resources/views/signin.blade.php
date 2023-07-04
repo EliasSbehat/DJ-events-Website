@@ -3,6 +3,9 @@
 
 <head>
     @include('layout.head')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <title>Sign In</title>
 </head>
 
 <body>
@@ -20,23 +23,20 @@
                         <form>
                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                             <!-- Email input -->
-                            <div class="mb-4">
-                                <label class="form-label" for="email">Email address</label>
-                                <input type="email" id="email" class="form-control form-control-lg" />
+                            <div class="mt-4 mb-4">
+                                <label class="form-label" for="first_name_input">First Name</label>
+                                <input type="text" id="first_name_input" name="first_name" class="form-control form-control-lg" required placeholder="Enter your first name" />
                             </div>
 
-                            <!-- Password input -->
-                            <div class="mb-4">
-                                <label class="form-label" for="password">Password</label>
-                                <input type="password" id="password" class="form-control form-control-lg" />
+                            <!-- Last Name input -->
+                            <div class="mt-4 mb-4">
+                                <label class="form-label" for="last_name_input">Last Name</label>
+                                <input type="text" id="last_name_input" name="last_name" class="form-control form-control-lg" required placeholder="Enter your last name" />
                             </div>
 
-                            <div class="d-flex justify-content-around align-items-center mb-4">
-                                <!-- Checkbox -->
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
-                                    <label class="form-check-label" for="form1Example3"> Remember me </label>
-                                </div>
+                            <!-- Phone input -->
+                            <div class="mt-4 mb-4">
+                                <input type="tel" id="userphone" name="phone" class="form-control form-control-lg w-100" required placeholder="Enter your phone number" />
                             </div>
 
                             <!-- Submit button -->
@@ -56,6 +56,13 @@
 
     <!-- Bootstrap core JavaScript-->
     <script>
+        const phoneInputField = document.querySelector("#userphone");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            initialCountry: "gb",
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
         $(".signin-btn").click(function() {
             signIn();
         });
@@ -66,25 +73,23 @@
         });
 
         function signIn() {
-            var email = $("#email").val();
-            var pwd = $("#password").val();
+            var first_name = $("#first_name_input").val();
+            var last_name = $("#last_name_input").val();
+            var phone = $("#userphone").val();
             $.get(
                 "signin/checkuser", {
-                    n: email, //name
-                    p: pwd //pwd
+                    first_name: first_name, //
+                    last_name: last_name, //
+                    phone: phone
                 },
                 function(res) {
                     if (res == "wrong user") {
-                        alert("The user name is wrong.");
-                        $("#email").focus();
-                    } else if (res == "wrong pwd") {
-                        alert("The password is wrong.");
-                        $("#password").focus();
+                        alert("Not registered.");
                     } else if (res == "not verified") {
                         alert("Not verified");
                     } else {
                         sessionStorage.setItem("x-t", res);
-                        location.href = '/songlist';
+                        location.href = '/verify';
                     }
                 }
             );

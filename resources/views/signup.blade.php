@@ -5,6 +5,7 @@
     @include('layout.head')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <title>Sign Up</title>
 </head>
 
 <body>
@@ -35,10 +36,10 @@
                             @endif
 
                             <!-- Email input -->
-                            <div class="mt-4 mb-4">
+                            <!-- <div class="mt-4 mb-4">
                                 <label class="form-label" for="email_input">Email address</label>
                                 <input type="email" id="email_input" name="email" class="form-control form-control-lg" required placeholder="Enter a valid email address" />
-                            </div>
+                            </div> -->
 
                             <!-- First Name input -->
                             <div class="mt-4 mb-4">
@@ -58,16 +59,16 @@
                             </div>
 
                             <!-- Password input -->
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <label class="form-label" for="pwd_input">Password</label>
                                 <input type="password" id="pwd_input" name="password" class="form-control form-control-lg" required placeholder="Enter password" />
-                            </div>
+                            </div> -->
 
                             <!-- Re Password input -->
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <label class="form-label" for="pwd_input2">Confirm Password</label>
                                 <input type="password" id="pwd_input2" name="password_confirmation" class="form-control form-control-lg" required placeholder="Enter repeat password" />
-                            </div>
+                            </div> -->
 
                             <div class="text-center text-lg-start mt-4 pt-2">
                                 <button type="submit" class="btn btn-primary register-btn btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">Register</button>
@@ -87,6 +88,7 @@
     <script>
         const phoneInputField = document.querySelector("#userphone");
         const phoneInput = window.intlTelInput(phoneInputField, {
+            initialCountry: "gb",
             utilsScript:
                 "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });

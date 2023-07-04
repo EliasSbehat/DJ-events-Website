@@ -3,6 +3,7 @@
 
 <head>
     @include('layout.head')
+    <title>Song Manage</title>
 </head>
 
 <body>
@@ -12,8 +13,13 @@
         <h4 class="mb-3">Song Manage</h4>
     </div>
     <div class="container">
+        <div class="form-check d-flex float-right" style="float: right !important;">
+            <input class="form-check-input" type="checkbox" value="" id="requestTurn" />
+            <label class="form-check-label" for="requestTurn">Request Turn On/Off</label>
+        </div>
         <a class="btn btn-primary import-btn" role="button">Import</a>
         <a class="btn btn-primary add-btn" role="button" data-mdb-toggle="modal" data-mdb-target="#add_song">Add</a>
+
         <!-- Modal -->
         <div class="modal fade" id="add_song" tabindex="-1" aria-labelledby="add_songLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -60,6 +66,32 @@
         $(".import-btn").click(function(){
             $(".file_import").click();
         });
+        getSetting();
+        function getSetting() {
+            $.get(
+                "getRequestSetting", {}, function(res) {
+                    console.log(res);
+                    if (res.length>0) {
+                        if (res[0]?.turn_on) {
+                            $("#requestTurn").attr("checked", true);
+                        } else {
+                            $("#requestTurn").attr("checked", false);
+                        }
+                    }
+                }, "json"
+            );
+        }
+        $("#requestTurn").click(function(){
+            console.log($(this)[0].checked);
+            $.get(
+                "getRequestSetting/set", {
+                    turn: $(this)[0].checked
+                }, function(res) {
+                    getSetting();
+                }, "json"
+            );
+        });
+
         getSongs();
         // Get the file input element
         var fileInput = $(".file_import");

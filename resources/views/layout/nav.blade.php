@@ -97,7 +97,9 @@
             if (res=='failed') {
                 location.href = "/";
             } else {
-                
+                if (!sessionStorage.getItem("x-t")) {
+					location.href = "/";
+				}
             }
         }
     )

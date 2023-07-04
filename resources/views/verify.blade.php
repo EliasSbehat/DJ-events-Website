@@ -5,6 +5,7 @@
     @include('layout.head')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <title>Verify SMS</title>
 </head>
 
 <body>
@@ -59,7 +60,11 @@
                         alert("Invalid Code");
                     } else if (res=="success") {
                         alert("Success");
-                        location.href="/signin";
+                        if (sessionStorage.getItem("x-t")) {
+                            location.href="/songlist";
+                        } else {
+                            location.href="/signin";
+                        }
                     }
                 }
             )

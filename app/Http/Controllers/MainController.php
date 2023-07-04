@@ -38,33 +38,36 @@ class MainController extends Controller
         $randomNumber = mt_rand(1000, 9999);
         // print_r($input);die();
         $request->validate([
-            'email' => 'required|unique:users|max:255',
-            'password' => 'required|min:8|max:255|confirmed',
+            'phone' => 'required|unique:users',
         ]);
+        if ($input['phone'][0]=="+") {
+            $input['phone'] = substr($input['phone'], 1);
+        }
         DB::table('users')->insert([
-            'email' => $input['email'],
             'first_name' => $input['first_name'],
             'last_name' => $input['last_name'],
             'phone' => $input['phone'],
             'verify_number' => $randomNumber,
-            'password' => md5($input['password']),
             'remember_token' => $input['_token']
         ]);
-        session(['email' => $input['email']]);
+        session(['phone' => $input['phone']]);
         // Message details
         $numbers = array($input['phone']);
-        $sender = urlencode('Website');
+        $sender = urlencode('karaokedj');
         $message = rawurlencode($randomNumber);
     
         $numbers = implode(',', $numbers);
     
-        // Prepare data for POST request
         $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
     
-
-        $response = Http::post('https://api.txtlocal.com/send/', [
-            'apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message
-        ]);
+        // Send the POST request with cURL
+        $ch = curl_init('https://api.txtlocal.com/send/');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+		
         // Send the POST request with cURL
         
         // Process your response here
@@ -80,18 +83,18 @@ class MainController extends Controller
     {
         $input = $request->all();
         $code = $input['code'];
-        $email = session('email');
+        $phone = session('phone');
         $data = DB::table('users')
             ->select('*')
-            ->where('email', $email)
+            ->where('phone', $phone)
             ->get();
         
         if (count($data)) {
             if ($data[0]->verify_number == $code) {
-                DB::table('users')->where('email', $email)->update([
+                DB::table('users')->where('phone', $phone)->update([
                     'verified' => 1
                 ]);
-                session()->forget('email');
+                session()->forget('phone');
                 echo "success";
             } else {
                 echo "invalid";
@@ -100,7 +103,7 @@ class MainController extends Controller
     }
     public function logout()
     {
-        session()->forget('email');
+        session()->forget('phone');
         session()->forget('name');
         session()->forget('x-t');
         session()->forget('role');
@@ -120,27 +123,48 @@ class MainController extends Controller
     public function checkuser(Request $request)
     {
         $input = $request->post();
-        $email = $request->input('n');
-        $pwd = $request->input('p');
-        $user = DB::table('users')->where('email', $email)->first();
-        $token = Hash::make($email . "_@123Col_" . $pwd . time());
+        $first_name = $request->input('first_name');
+        $last_name = $request->input('last_name');
+        $phone = $request->input('phone');
+        if ($phone[0]=="+") {
+            $phone = substr($phone, 1);
+        }
+        $user = DB::table('users')->where('phone', $phone)->first();
+        $token = Hash::make($phone . "_@123Col_" . $first_name . time());
+        $randomNumber = mt_rand(1000, 9999);
+        $sms_api_key = config('app.sms_key');
         if ($user) {
-            if ($user->password == md5($pwd)) {
-                if ($user->verified) {
-                    DB::table('users')->where('email', $email)->update([
-                        'remember_token' => $token
-                    ]);
-                    session(['x-t' => $token]);
-                    session(['user-id' => $user->id]);
-                    session(['email' => $email]);
-                    session(['name' => $user->first_name.' '.$user->last_name]);
-                    session(['role' => $user->role]);
-                    echo $token;
-                } else {
-                    echo "not verified";
-                }
+            if ($user->verified) {
+                DB::table('users')->where('phone', $phone)->update([
+                    'remember_token' => $token,
+                    'verify_number' => $randomNumber
+                ]);
+                session(['x-t' => $token]);
+                session(['user-id' => $user->id]);
+                session(['phone' => $phone]);
+                session(['name' => $user->first_name.' '.$user->last_name]);
+                session(['role' => $user->role]);
+
+
+                $numbers = array($phone);
+                $sender = urlencode('karaokedj');
+                $message = rawurlencode($randomNumber);
+            
+                $numbers = implode(',', $numbers);
+            
+                $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
+            
+                // Send the POST request with cURL
+                $ch = curl_init('https://api.txtlocal.com/send/');
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $response = curl_exec($ch);
+                curl_close($ch);
+
+                echo $token;
             } else {
-                echo "wrong pwd";
+                echo "not verified";
             }
         } else {
             echo "wrong user";
@@ -177,14 +201,24 @@ class MainController extends Controller
     }
     public function songRequest(Request $request)
     {
+
+        $setData = DB::table('request_setting')
+            ->select('*')
+            ->get();
+        if (count($setData)) {
+            if ($setData[0]->turn_on==0) {
+                exit("turnoff");
+            }
+        }
+
         $requestData = $request->all();
         $currentDate = date('Y-m-d H:i:s'); // Format the date as per the datetime type in MySQL
 
         //mail
         $email = new TestMail(
-            $sender = session('email'),
+            $sender = 'requests@karaokedj.co.uk',
             $subject = 'Request E-mail',
-            $body = session('name') ." - ". $requestData['singer'] .  "<br> has requested:" . $requestData['artist'] . " - " . $requestData['title'] ."<br>" . $requestData['dj'] ."<br>" .$currentDate
+            $body = session('name') ." - ". $requestData['singer'] .  "\n has requested:" . $requestData['artist'] . " - " . $requestData['title'] ."\n" . $requestData['dj'] ."\n" .$currentDate
         );
 
         // When: we receive that e-mail
@@ -227,6 +261,26 @@ class MainController extends Controller
         print_r(json_encode($data)); 
         exit();
     }
+    public function getRequestSetting()
+    {
+        $data = DB::table('request_setting')
+            ->select('*')
+            ->get();
+        
+        print_r(json_encode($data)); 
+        exit();
+    }
+    public function getRequestSettingSet(Request $request)
+    {
+        $turn = $request->input('turn');
+        $set = ($turn=='true')?1:0;
+        DB::table('request_setting')->update([
+            'turn_on' => $set
+        ]);
+        exit();
+    }
+    
+    
     public function songGetByUser(Request $request)
     {
         $userId = session('user-id');
