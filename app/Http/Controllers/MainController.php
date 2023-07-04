@@ -184,7 +184,7 @@ class MainController extends Controller
         $email = new TestMail(
             $sender = session('email'),
             $subject = 'Request E-mail',
-            $body = "<h3>Registered Name</h3> - ". $requestData['singer'] .  "\n has requested:" . $requestData['artist'] . " - " . $requestData['title'] ."\n" . $requestData['dj'] ."\n" .$currentDate
+            $body = session('name') ." - ". $requestData['singer'] .  "\n has requested:" . $requestData['artist'] . " - " . $requestData['title'] ."\n" . $requestData['dj'] ."\n" .$currentDate
         );
 
         // When: we receive that e-mail

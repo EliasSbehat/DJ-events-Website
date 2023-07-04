@@ -1,12 +1,8 @@
 @component('mail::message')
-# Introduction
+# Request Song
 
-The body of your message.
+{{ $body }}
 
-@component('mail::button', ['url' => ''])
-Button Text
-@endcomponent
-
-Thanks,<br>
-{{ config('app.name') }}
+Thanks!
+<!-- {{ config('app.name') }} -->
 @endcomponent

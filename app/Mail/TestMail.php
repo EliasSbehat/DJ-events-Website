@@ -34,6 +34,8 @@ class TestMail extends Mailable
         return $this
             ->from($this->sender)
             ->subject($this->subject)
-            ->markdown('emails.tests.testmail');
+            ->markdown('emails.tests.testmail')->with([
+                'body' => $this->body,
+            ]);
     }
 }
