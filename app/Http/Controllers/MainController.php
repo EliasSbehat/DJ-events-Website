@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
+use Illuminate\Support\Facades\Http;
 
 
 
@@ -60,13 +61,12 @@ class MainController extends Controller
         // Prepare data for POST request
         $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
     
+
+        $response = Http::post('https://api.txtlocal.com/send/', [
+            'apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message
+        ]);
         // Send the POST request with cURL
-        $ch = curl_init('https://api.txtlocal.com/send/');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
+        print_r($response);die();
         
         // Process your response here
         // echo $response; 
