@@ -101,6 +101,25 @@ class MainController extends Controller
             }
         }
     }
+    public function verifyLink($token)
+    {
+        session(['x-t' => $token]);
+        $data = DB::table('users')
+            ->select('*')
+            ->where('remember_token', $token)
+            ->get();
+        if (count($data)) {
+            echo "success";
+            session(['user-id' => $data[0]->id]);
+            session(['phone' => $data[0]->phone]);
+            session(['name' => $data[0]->first_name.' '.$data[0]->last_name]);
+            session(['role' => $data[0]->role]);
+            return redirect('/songlist');
+        } else {
+            echo "invalid";
+            return redirect('/signin');
+        }
+    }
     public function logout()
     {
         session()->forget('phone');
@@ -110,11 +129,10 @@ class MainController extends Controller
         session()->forget('user-id');
         return redirect('/signin');
     }
-    public function check(Request $request)
+    public function check()
     {
-        $token = $request->input('token');
         $s_token = session('x-t');
-        if ($token == $s_token) {
+        if ($s_token) {
             echo "success";
         } else {
             echo "failed";
@@ -139,14 +157,14 @@ class MainController extends Controller
         }
         $user = DB::table('users')->where('phone', $phone)->first();
 
-        $token = Hash::make($phone . "_@123Col_" . $first_name . time());
-        $randomNumber = mt_rand(1000, 9999);
+        $token = md5($phone . "_@123Col_" . $first_name . time());
+        $host = request()->getSchemeAndHttpHost();
+        $link = 'Click here to request karaoke. ' . $host . '/auth'. '/'. $token;
         $sms_api_key = config('app.sms_key');
         if ($user) {
             // if ($user->verified) {
             DB::table('users')->where('phone', $phone)->update([
-                'remember_token' => $token,
-                'verify_number' => $randomNumber
+                'remember_token' => $token
             ]);
             session(['x-t' => $token]);
             session(['user-id' => $user->id]);
@@ -157,7 +175,7 @@ class MainController extends Controller
 
             $numbers = array($phone);
             $sender = urlencode('karaokedj');
-            $message = rawurlencode($randomNumber);
+            $message = rawurlencode($link);
         
             $numbers = implode(',', $numbers);
         

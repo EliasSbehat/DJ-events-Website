@@ -37,4 +37,5 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/requested', 'requested');
     Route::get('/getRequestSetting', 'getRequestSetting');
     Route::get('/getRequestSetting/set', 'getRequestSettingSet');
+    Route::get('/auth/{token}', 'verifyLink');
 });
