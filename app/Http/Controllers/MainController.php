@@ -66,7 +66,6 @@ class MainController extends Controller
             'apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message
         ]);
         // Send the POST request with cURL
-        print_r($response);die();
         
         // Process your response here
         // echo $response; 
