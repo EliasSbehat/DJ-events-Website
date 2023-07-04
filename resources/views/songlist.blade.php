@@ -73,6 +73,7 @@
             $("#song_artist").val(artist);
         });
         $(".submit-btn").click(function(){
+            showLoading();
             var title = $("#song_title").val();
             var artist = $("#song_artist").val();
             var singer = $("#singer").val();
@@ -86,6 +87,7 @@
                     singer: singer,
                     dj: dj
                 }, function (res) {
+                    hideLoading();
                     $('#request').modal('hide');
                     $("#make_dj").val('');
                     $("#song_id").val('');
