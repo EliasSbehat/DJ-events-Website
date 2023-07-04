@@ -3,14 +3,14 @@
 
 <head>
     @include('layout.head')
-    <title>Song Manage</title>
+    <title>Song Manager</title>
 </head>
 
 <body>
     @include('layout.nav')
     
     <div class="text-center pt-4">
-        <h4 class="mb-3">Song Manage</h4>
+        <h4 class="mb-3">Song Manager</h4>
     </div>
     <div class="container">
         <div class="form-check d-flex float-right" style="float: right !important;">

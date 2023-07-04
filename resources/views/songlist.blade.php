@@ -3,14 +3,14 @@
 
 <head>
     @include('layout.head')
-    <title>Song List</title>
+    <title>Request Songs</title>
 </head>
 
 <body>
     @include('layout.nav')
     
     <div class="text-center pt-4">
-        <h4 class="mb-3">Song List</h4>
+        <h4 class="mb-3">Request Songs</h4>
     </div>
     <div class="container">
         <!-- Modal -->

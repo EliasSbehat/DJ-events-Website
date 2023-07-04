@@ -22,14 +22,14 @@
                 <!-- Left links -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/songlist">Songs</a>
+                        <a class="nav-link" href="/songlist">Request Songs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/requested">Requested Song</a>
+                        <a class="nav-link" href="/requested">My Requests</a>
                     </li>
                     @if (session('role')==1)
                     <li class="nav-item song-mng">
-                        <a class="nav-link" href="/songmng">Song Manage</a>
+                        <a class="nav-link" href="/songmng">Song Manager</a>
                     </li>
                     @endif
                 </ul>

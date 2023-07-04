@@ -3,14 +3,14 @@
 
 <head>
     @include('layout.head')
-    <title>Requested List</title>
+    <title>My Requests</title>
 </head>
 
 <body>
     @include('layout.nav')
     
     <div class="text-center pt-4">
-        <h4 class="mb-3 requested-text">Today Requested List</h4>
+        <h4 class="mb-3 requested-text">My Requests</h4>
     </div>
     <div class="container">
         <div class="mb-4 w-25">
@@ -81,6 +81,8 @@
 
     <script>
         getSongs(1);
+        $("#past_table_id").hide();
+        $("#past_table_id_wrapper").hide();
         $("#date").change(function(){
             getSongs($("#date").val()*1);
             if ($("#date").val()*1) {
