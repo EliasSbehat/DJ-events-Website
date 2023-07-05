@@ -22,3 +22,5 @@
     <script type="text/javascript" src="assets/libs/js/mdb.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+    <link rel="icon" href="/assets/imgs/discos (logo).png" type="image/png">

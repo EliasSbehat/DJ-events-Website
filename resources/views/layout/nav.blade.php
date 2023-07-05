@@ -13,8 +13,8 @@
                 <!-- Navbar brand -->
                 <a class="navbar-brand mt-2 mt-lg-0" href="#">
                     <img
-                        src="/assets/imgs/logo.jpg"
-                        height="45"
+                        src="/assets/imgs/discos (logo).png"
+                        height="50"
                         alt="MDB Logo"
                         loading="lazy"
                     />

@@ -36,7 +36,7 @@
                             <input type="text" id="singer" class="form-control form-control-lg" />
                         </div>
                         <div class="mb-4">
-                            <label class="form-label" for="make_dj">Make the DJ</label>
+                            <label class="form-label" for="make_dj">Message The DJ</label>
                             <input type="text" id="make_dj" class="form-control form-control-lg" />
                         </div>
                     </div>
