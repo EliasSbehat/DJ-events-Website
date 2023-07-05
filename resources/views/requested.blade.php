@@ -117,7 +117,7 @@
                 }, function (res) {
                     hideLoading();
                     if (res=="turnoff") {
-                        alert("The song is not available for request at the moment");
+                        alert("Sorry, we are not taking requests at the moment.");
                     } else {
                         $('#request').modal('hide');
                         $("#make_dj").val('');
