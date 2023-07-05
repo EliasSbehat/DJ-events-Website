@@ -245,14 +245,15 @@ class MainController extends Controller
         $email = new TestMail(
             $sender = 'requests@karaokedj.co.uk',
             $subject = 'Request E-mail',
-            $body = session('name') ."  :". $requestData['singer'],
+            $phone = session('phone'),
+            $body = session('name') .": ". $requestData['singer'],
             $song = $requestData['artist'] . "  " . $requestData['title'],
             $msg = $requestData['dj'],
             $date = $currentDate
         );
 
         // When: we receive that e-mail
-        // Mail::to('speedjudy928@gmail.com')->send($email);
+        Mail::to('speedjudy928@gmail.com')->send($email);
         Mail::to('nick@djnickburrett.com')->send($email);
 
         DB::table('request')->insert([

@@ -35,11 +35,12 @@
 
                             <!-- Phone input -->
                             <div class="mt-4 mb-4">
+                                <label class="form-label" for="userphone">Mobile Number</label><br>
                                 <input type="tel" id="userphone" name="phone" class="form-control form-control-lg w-100" required placeholder="Enter your phone number" />
                             </div>
 
                             <!-- Submit button -->
-                            <button type="button" class="btn btn-primary signin-btn btn-lg btn-block">Sign in</button>
+                            <button type="button" class="btn btn-primary signin-btn btn-lg btn-block mb-8">Sign in</button>
 
                                             <!-- Register buttons -->
                             <!-- <div class="text-center mt-4"> -->

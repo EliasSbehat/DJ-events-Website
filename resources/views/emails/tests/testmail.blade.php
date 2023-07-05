@@ -1,6 +1,8 @@
 @component('mail::message')
 # Request Song
 
+Mobile Number: {{ $phone }}
+<br>
 {{ $body }}
 <br>
 has requested:

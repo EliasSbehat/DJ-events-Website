@@ -18,9 +18,10 @@ class TestMail extends Mailable
      *
      * @return void
      */
-    public function __construct($sender, $subject, $body, $song, $msg, $date) {
+    public function __construct($sender, $subject, $phone, $body, $song, $msg, $date) {
         $this->sender = $sender;
         $this->subject = $subject;
+        $this->phone = $phone;
         $this->body = $body;
         $this->song = $song;
         $this->msg = $msg;
@@ -38,6 +39,7 @@ class TestMail extends Mailable
             ->from($this->sender)
             ->subject($this->subject)
             ->markdown('emails.tests.testmail')->with([
+                'phone' => $this->phone,
                 'body' => $this->body,
                 'song' => $this->song,
                 'msg' => $this->msg,
