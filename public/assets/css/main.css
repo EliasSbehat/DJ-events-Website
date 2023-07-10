@@ -10,6 +10,9 @@ div.loading {
     height: 100%;
     background-color: rgba(16, 16, 16, 0.5);
 }
+table.dataTable {
+    width: 100% !important;
+}
 
 @-webkit-keyframes uil-ring-anim {
     0% {

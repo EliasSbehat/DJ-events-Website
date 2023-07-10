@@ -7,8 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
 use Illuminate\Support\Facades\Http;
-
-
+use DataTables;
 
 class MainController extends Controller
 {
@@ -293,6 +292,34 @@ class MainController extends Controller
         print_r(json_encode($data)); 
         exit();
     }
+    public function songGetS()
+    {
+        $data = DB::table('songs')
+            ->select('*')
+            ->get();
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function($row){
+                $actionBtn = '<button type="button" class="btn btn-primary request-btn" id="'.$row->id.'">Request</button>';
+                return $actionBtn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+    public function songGetMS()
+    {
+        $data = DB::table('songs')
+            ->select('*')
+            ->get();
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function($row){
+                $actionBtn = '<button type="button" class="btn btn-secondary delete-btn" id="'.$row->id.'"><i class="fas fa-trash-can"></i></button><button type="button" class="btn btn-primary edit-btn" id="'.$row->id.'"><i class="fas fa-pen-to-square"></i></button>';
+                return $actionBtn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
     public function getRequestSetting()
     {
         $data = DB::table('request_setting')
@@ -334,6 +361,41 @@ class MainController extends Controller
         
         print_r(json_encode($data)); 
         exit();
+    }
+    public function songGetByUserS(Request $request) 
+    {
+        $userId = session('user-id');
+        $today = $request->input('today');
+        $currentDate = date('Y-m-d');
+        if ($today == 1) {
+            $data = DB::table('request')
+                ->join('songs', 'request.song_id', '=', 'songs.id')
+                ->where('request.requester_id', '=', $userId)
+                ->where('request.date', 'like', '%'.$currentDate.'%')
+                ->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function($row){
+                    $actionBtn = '<button type="button" class="btn btn-primary request-btn" id="'.$row->id.'">Request</button>';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        } else {
+            $data = DB::table('request')
+                ->join('songs', 'request.song_id', '=', 'songs.id')
+                ->where('request.requester_id', '=', $userId)
+                ->where('request.date', 'not like', '%'.$currentDate.'%')
+                ->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function($row){
+                    $actionBtn = '<button type="button" class="btn btn-primary request-btn" id="'.$row->id.'">Request</button>';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
     }
     public function songDelete(Request $request)
     {

@@ -80,11 +80,11 @@
     <!-- Start wrapper-->
 
     <script>
-        getSongs(1);
+        getSongs();
         $("#past_table_id").hide();
         $("#past_table_id_wrapper").hide();
         $("#date").change(function(){
-            getSongs($("#date").val()*1);
+            // getSongs($("#date").val()*1);
             if ($("#date").val()*1) {
                 $(".requested-text").val('Today Requested List');
                 $("#past_table_id").hide();
@@ -128,7 +128,7 @@
             );
         });
         $(document).on("click", ".request-btn", function(){
-            var id = $(this).parent().parent().attr("id");
+            var id = $(this).attr("id");
             $('#request').modal('show');
             $("#song_id").val(id);
             var title = $(this).parent().parent().children()[0].innerText;
@@ -136,46 +136,37 @@
             $("#song_title").val(title);
             $("#song_artist").val(artist);
         });
-        function getSongs(today) {
-            showLoading();
-            if (today==1) {
-                $.get(
-                    "/songmng/getByUser", {
-                        today: today
-                    }, function (res) {
-                        var tableData = "";
-                        for (var i=0;i<res.length;i++) {
-                            var tr = "<tr id='"+res[i]['id']+"'>";
-                            tr += `<td>${res[i]['title']}</td>`;
-                            tr += `<td>${res[i]['artist']}</td>`;
-                            tr += `</tr>`;
-                            tableData += tr;
-                        }
-                        $("#today_song_tbl").html(tableData);
-                        $('#today_table_id').DataTable();
-                        hideLoading();          
-                    }, "json"
-                );
-            } else {
-                $.get(
-                    "/songmng/getByUser", {
-                        today: today
-                    }, function (res) {
-                        var tableData = "";
-                        for (var i=0;i<res.length;i++) {
-                            var tr = "<tr id='"+res[i]['id']+"'>";
-                            tr += `<td>${res[i]['title']}</td>`;
-                            tr += `<td>${res[i]['artist']}</td>`;
-                            tr += `<td class="d-flex requestTD"><button type="button" class="btn btn-primary request-btn">Request</button></td>`;
-                            tr += `</tr>`;
-                            tableData += tr;
-                        }
-                        $("#past_song_tbl").html(tableData);
-                        $('#past_table_id').DataTable();
-                        hideLoading();          
-                    }, "json"
-                );
-            }
+        function getSongs() {
+            // showLoading();
+            $('#today_table_id').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "type": "GET",
+                    "url": "/songmng/getByUserS?today="+1,
+                    "dataType": "json",
+                    "contentType": 'application/json; charset=utf-8',
+                },
+                "columns": [
+                    { data: 'title', name: 'title' },
+                    { data: 'artist', name: 'artist' },
+                ]
+            });
+            $('#past_table_id').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "type": "GET",
+                    "url": "/songmng/getByUserS?today="+0,
+                    "dataType": "json",
+                    "contentType": 'application/json; charset=utf-8',
+                },
+                "columns": [
+                    { data: 'title', name: 'title' },
+                    { data: 'artist', name: 'artist' },
+                    { data: 'action', name: 'action' },
+                ]
+            });
         }
     </script>
 </body>

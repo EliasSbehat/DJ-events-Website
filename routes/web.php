@@ -32,7 +32,10 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/songmng/delete-song', 'songDelete');
     Route::get('/songmng/request-song', 'songRequest');
     Route::get('/songmng/get', 'songGet');
+    Route::get('/songmng/getS', 'songGetS');
+    Route::get('/songmng/getMS', 'songGetMS');
     Route::get('/songmng/getByUser', 'songGetByUser');
+    Route::get('/songmng/getByUserS', 'songGetByUserS');
     Route::get('/songlist', 'songlist');
     Route::get('/requested', 'requested');
     Route::get('/getRequestSetting', 'getRequestSetting');

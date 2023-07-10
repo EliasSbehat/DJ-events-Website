@@ -65,7 +65,7 @@
 
     <script>
         $(document).on("click", ".request-btn", function(){
-            var id = $(this).parent().parent().attr("id");
+            var id = $(this).attr("id");
             $('#request').modal('show');
             $("#song_id").val(id);
             var title = $(this).parent().parent().children()[0].innerText;
@@ -104,24 +104,39 @@
         getSongs();
 
         function getSongs() {
-            showLoading();
-            $.get(
-                "/songmng/get", {
-                }, function (res) {
-                    var tableData = "";
-                    for (var i=0;i<res.length;i++) {
-                        var tr = "<tr id='"+res[i]['id']+"'>";
-                        tr += `<td>${res[i]['title']}</td>`;
-                        tr += `<td>${res[i]['artist']}</td>`;
-                        tr += `<td class="d-flex"><button type="button" class="btn btn-primary request-btn">Request</button></td>`;
-                        tr += `</tr>`;
-                        tableData += tr;
-                    }
-                    $("#song_tbl").html(tableData);
-                    $('#table_id').DataTable();
-                    hideLoading();          
-                }, "json"
-            );
+            // showLoading();
+            $('#table_id').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "type": "GET",
+                    "url": "/songmng/getS",
+                    "dataType": "json",
+                    "contentType": 'application/json; charset=utf-8',
+                },
+                "columns": [
+                    { data: 'title', name: 'title' },
+                    { data: 'artist', name: 'artist' },
+                    { data: 'action', name: 'action' },
+                ]
+            });
+            // $.get(
+            //     "/songmng/get", {
+            //     }, function (res) {
+            //         var tableData = "";
+            //         for (var i=0;i<res.length;i++) {
+            //             var tr = "<tr id='"+res[i]['id']+"'>";
+            //             tr += `<td>${res[i]['title']}</td>`;
+            //             tr += `<td>${res[i]['artist']}</td>`;
+            //             tr += `<td class="d-flex"><button type="button" class="btn btn-primary request-btn">Request</button></td>`;
+            //             tr += `</tr>`;
+            //             tableData += tr;
+            //         }
+            //         $("#song_tbl").html(tableData);
+            //         $('#table_id').DataTable();
+            //         hideLoading();          
+            //     }, "json"
+            // );
         }
     </script>
 </body>

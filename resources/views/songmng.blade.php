@@ -139,7 +139,7 @@
                 "/songmng/add", {
                     data: JSON.stringify(datas),
                 }, function (res) {
-                    getSongs();
+                    window.location.reload();
                 }
             );
         }
@@ -154,7 +154,7 @@
                     artist: artist
                 }, function (res) {
                     $('#add_song').modal('hide');
-                    getSongs();
+                    window.location.reload();
                 }
             );
         });
@@ -162,7 +162,7 @@
             format();
         });
         $(document).on("click", ".edit-btn", function(){
-            var id = $(this).parent().parent().attr("id");
+            var id = $(this).attr("id");
             $('#add_song').modal('show');
             $("#song_id").val(id);
             $("#add_songLabel").val("Edit Song");
@@ -172,36 +172,51 @@
             $("#song_artist").val(artist);
         });
         $(document).on("click", ".delete-btn", function(){
-            var id = $(this).parent().parent().attr("id");
+            var id = $(this).attr("id");
             $.get(
                 "/songmng/delete-song",
                 {
                     id, id
                 }, function() {
-                    getSongs();
+                    window.location.reload();
                 }
             );
         });
         function getSongs() {
-            showLoading();
-            $.get(
-                "/songmng/get", {
-                }, function (res) {
-                    var tableData = "";
-                    for (var i=0;i<res.length;i++) {
-                        var tr = "<tr id='"+res[i]['id']+"'>";
-                        tr += `<td>${res[i]['title']}</td>`;
-                        tr += `<td>${res[i]['artist']}</td>`;
-                        tr += `<td class="d-flex"><button type="button" class="btn btn-secondary delete-btn"><i class="fas fa-trash-can"></i></button>
-                                    <button type="button" class="btn btn-primary edit-btn"><i class="fas fa-pen-to-square"></i></button></td>`;
-                        tr += `</tr>`;
-                        tableData += tr;
-                    }
-                    $("#song_tbl").html(tableData);
-                    $('#table_id').DataTable();
-                    hideLoading();          
-                }, "json"
-            );
+            // showLoading();
+            $('#table_id').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "type": "GET",
+                    "url": "/songmng/getMS",
+                    "dataType": "json",
+                    "contentType": 'application/json; charset=utf-8',
+                },
+                "columns": [
+                    { data: 'title', name: 'title' },
+                    { data: 'artist', name: 'artist' },
+                    { data: 'action', name: 'action' },
+                ]
+            });
+            // $.get(
+            //     "/songmng/get", {
+            //     }, function (res) {
+            //         var tableData = "";
+            //         for (var i=0;i<res.length;i++) {
+            //             var tr = "<tr id='"+res[i]['id']+"'>";
+            //             tr += `<td>${res[i]['title']}</td>`;
+            //             tr += `<td>${res[i]['artist']}</td>`;
+            //             tr += `<td class="d-flex"><button type="button" class="btn btn-secondary delete-btn"><i class="fas fa-trash-can"></i></button>
+            //                         <button type="button" class="btn btn-primary edit-btn"><i class="fas fa-pen-to-square"></i></button></td>`;
+            //             tr += `</tr>`;
+            //             tableData += tr;
+            //         }
+            //         $("#song_tbl").html(tableData);
+            //         $('#table_id').DataTable();
+            //         hideLoading();          
+            //     }, "json"
+            // );
             format();
         }
         function format() {
