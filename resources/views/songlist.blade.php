@@ -24,12 +24,12 @@
                     <div class="modal-body">
                         <div class="mb-4">
                             <label class="form-label" for="song_title">Title</label>
-                            <input type="text" id="song_title" class="form-control form-control-lg" />
+                            <input type="text" id="song_title" class="form-control form-control-lg" disabled />
                             <input type="hidden" id="song_id" />
                         </div>
                         <div class="mb-4">
                             <label class="form-label" for="song_artist">Artist</label>
-                            <input type="text" id="song_artist" class="form-control form-control-lg" />
+                            <input type="text" id="song_artist" class="form-control form-control-lg" disabled />
                         </div>
                         <div class="mb-4">
                             <label class="form-label" for="singer">Who is singing?</label>
@@ -114,6 +114,9 @@
                     "dataType": "json",
                     "contentType": 'application/json; charset=utf-8',
                 },
+                "lengthMenu": [
+                    15, 50, 100
+                ],
                 "columns": [
                     { data: 'title', name: 'title' },
                     { data: 'artist', name: 'artist' },

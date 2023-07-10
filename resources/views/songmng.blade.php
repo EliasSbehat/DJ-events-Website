@@ -193,6 +193,9 @@
                     "dataType": "json",
                     "contentType": 'application/json; charset=utf-8',
                 },
+                "lengthMenu": [
+                    15, 50, 100
+                ],
                 "columns": [
                     { data: 'title', name: 'title' },
                     { data: 'artist', name: 'artist' },
