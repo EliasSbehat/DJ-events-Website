@@ -313,7 +313,7 @@ class MainController extends Controller
     }
     
     
-    public function songGetByUser(Request $request)
+    public function songGetByUser(Request $request) 
     {
         $userId = session('user-id');
         $today = $request->input('today');
@@ -340,6 +340,7 @@ class MainController extends Controller
         $requestData = $request->all();
         $id = $requestData['id'];
         DB::table('songs')->where('id', '=', $id)->delete();
+        DB::table('request')->where('song_id', '=', $id)->delete();
         exit();
     }
     
