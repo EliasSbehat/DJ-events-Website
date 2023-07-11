@@ -84,6 +84,30 @@ class MainAppController extends Controller
             echo "invalid";
         }
     }
+    public function songGetLoadMore(Request $request)
+    {
+        $page = $request->input('page');
+        $from = $request->input('from');
+        $limit = $request->input('limit');
+        $to = $from*1 + $limit*1;
+        $searchQuery = $request->input('searchQuery');
+        $searchArys = explode(" ",$searchQuery);
+        $searchAry = array_reverse($searchArys);
+        $data = DB::table('songs')
+            ->select('*')
+            ->where(function ($query) use ($searchAry) {
+                foreach ($searchAry as $searchItem) {
+                    $query->where('artist', 'like', '%' . $searchItem . '%')
+                        ->orWhere('title', 'like', '%' . $searchItem . '%');
+                }
+            })
+            ->offset($from)
+            ->limit($to-$from)
+            ->get();
+        $json = json_encode($data);
+        print_r($json);
+        exit();
+    }
     public function songGet(Request $request)
     {
         $from = $request->input('from');
@@ -220,8 +244,6 @@ class MainAppController extends Controller
         if (count($userData)) {
             $userId = $userData[0]->id;
         }
-        $name1 = 'John';
-        $name2 = 'Jane';
 
         if ($today == 'true') {
             $data = DB::table('request')
@@ -246,6 +268,58 @@ class MainAppController extends Controller
         }
         $count = count($data);
         print_r($count);
+        exit();
+    }
+    public function songGetByUserLoadMore(Request $request)
+    {
+        $page = $request->input('page');
+        $from = $request->input('from');
+        $limit = $request->input('limit');
+        $to = $from*1 + $limit*1;
+        $searchQuery = $request->input('searchQuery');
+        $searchArys = explode(" ",$searchQuery);
+        $searchAry = array_reverse($searchArys);
+        $today = $request->input('today');
+        $phone = $request->input('phone');
+        $userData = DB::table('users')
+            ->select('*')
+            ->where('phone', $phone)
+            ->get();
+        $userId = 0;
+        if (count($userData)) {
+            $userId = $userData[0]->id;
+        }
+        $currentDate = date('Y-m-d');
+        if ($today == 'true') {
+            $data = DB::table('request')
+                ->join('songs', 'request.song_id', '=', 'songs.id')
+                ->where('request.requester_id', '=', $userId)
+                ->where('request.date', 'like', '%'.$currentDate.'%')
+                ->where(function ($query) use ($searchAry) {
+                    foreach ($searchAry as $searchItem) {
+                        $query->where('artist', 'like', '%' . $searchItem . '%')
+                            ->orWhere('title', 'like', '%' . $searchItem . '%');
+                    }
+                })
+                ->offset($from)
+                ->limit($to-$from)
+                ->get();
+        } else {
+            $data = DB::table('request')
+                ->join('songs', 'request.song_id', '=', 'songs.id')
+                ->where('request.requester_id', '=', $userId)
+                ->where('request.date', 'not like', '%'.$currentDate.'%')
+                ->where(function ($query) use ($searchAry) {
+                    foreach ($searchAry as $searchItem) {
+                        $query->orWhere('title', 'like', '%' . $searchItem . '%')
+                            ->orWhere('artist', 'like', '%' . $searchItem . '%');
+                    }
+                })
+                ->offset($from)
+                ->limit($to-$from)
+                ->get();
+        }
+        print_r(json_encode($data)); 
         exit();
     }
     public function songGetByUser(Request $request)

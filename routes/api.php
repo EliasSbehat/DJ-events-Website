@@ -20,12 +20,14 @@ Route::controller(MainAppController::class)->group(function () {
     Route::get('/signin/checkuser', 'checkuser');
     Route::get('/verify/code', 'verifyCode');
     Route::get('/songmng/get', 'songGet');
+    Route::get('/songmng/get-loadmore', 'songGetLoadMore');
     Route::get('/songmng/add', 'songAdd');
     Route::post('/songmng/upload-file', 'fileUpload');
     Route::get('/songmng/delete-song', 'songDelete');
     Route::get('/songmng/getCount', 'songGetCount');
     Route::get('/songmng/request-song', 'songRequest');
     Route::get('/songmng/getByUser', 'songGetByUser');
+    Route::get('/songmng/getByUser-loadmore', 'songGetByUserLoadMore');
     Route::get('/songmng/getByUserCount', 'songGetByUserCount');
     Route::get('/getUserByPhone', 'getUserByPhone');
     Route::get('/getRequestSetting', 'getRequestSetting');
