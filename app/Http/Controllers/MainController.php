@@ -205,6 +205,10 @@ class MainController extends Controller
     {
         return view('songmng');
     }
+    public function received()
+    {
+        return view('received');
+    }
     public function songlist()
     {
         return view('songlist');
@@ -397,6 +401,32 @@ class MainController extends Controller
                 ->make(true);
         }
     }
+    public function getRequestedSongs() 
+    {
+        $data = DB::table('request')
+            ->join('songs', 'request.song_id', '=', 'songs.id')
+            ->join('users', 'request.requester_id', '=', 'users.id')
+            ->select('request.*', 'songs.title', 'songs.artist', 'users.first_name', 'users.last_name')
+            ->orderBy('request.date', 'asc')
+            ->get();
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('first_column', function($row){
+                $column1 = $row->first_name . ' ' . $row->last_name . ': ' . $row->singer;
+                return $column1;
+            })
+            ->addColumn('second_column', function($row){
+                $column1 = $row->artist . ' ' . $row->title;
+                return $column1;
+            })
+            ->addColumn('action', function($row){
+                $checked = ($row->checked)?"checked":"";
+                $actionBtn = '<input type="checkbox" class="read_check" '.$checked.' id="'.$row->id.'" />';
+                return $actionBtn;
+            })
+            ->rawColumns(['action', 'first_column', 'second_column'])
+            ->make(true);
+    }
     public function songDelete(Request $request)
     {
         $requestData = $request->all();
@@ -405,5 +435,15 @@ class MainController extends Controller
         DB::table('request')->where('song_id', '=', $id)->delete();
         exit();
     }
-    
+    public function setRead(Request $request)
+    {
+        $requestData = $request->all();
+        $id = $requestData['id'];
+        $checked = $requestData['checked'];
+        $flag = ($checked=="true")?1:0;
+        DB::table('request')->where('id', $id)->update([
+            'checked' => $flag
+        ]);
+        exit();
+    }
 }

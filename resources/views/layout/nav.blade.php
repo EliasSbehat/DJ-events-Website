@@ -32,6 +32,11 @@
                         <a class="nav-link" href="/songmng">Song Manager</a>
                     </li>
                     @endif
+                    @if (session('role')==1)
+                    <li class="nav-item song-mng">
+                        <a class="nav-link" href="/received">Received Requests</a>
+                    </li>
+                    @endif
                 </ul>
                 <!-- Left links -->
             </div>

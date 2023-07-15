@@ -27,6 +27,7 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/logout', 'logout');
     Route::get('/songs', 'songs');
     Route::get('/songmng', 'songmng');
+    Route::get('/received', 'received');
     Route::post('/songmng/add', 'songAdd');
     Route::get('/songmng/add-song', 'songAddSingle');
     Route::get('/songmng/delete-song', 'songDelete');
@@ -34,6 +35,8 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/songmng/get', 'songGet');
     Route::get('/songmng/getS', 'songGetS');
     Route::get('/songmng/getMS', 'songGetMS');
+    Route::get('/songmng/getRequestedSongs', 'getRequestedSongs');
+    Route::get('/songmng/set-read', 'setRead');
     Route::get('/songmng/getByUser', 'songGetByUser');
     Route::get('/songmng/getByUserS', 'songGetByUserS');
     Route::get('/songlist', 'songlist');
