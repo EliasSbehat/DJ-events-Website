@@ -67,11 +67,11 @@
             $temp.remove();
         }
         $(document).on("click", "#singer_column", function(){
-            $(this).attr('title', 'Copied!').tooltip('_fixTitle').tooltip('show');
+            // $(this).attr('title', 'Copied!').tooltip('_fixTitle').tooltip('show');
             copyToClipboard($(this)[0].innerText);
         });
         $(document).on("click", "#artist_column", function(){
-            $(this).attr('title', 'Copied!').tooltip('_fixTitle').tooltip('show');
+            // $(this).attr('title', 'Copied!').tooltip('_fixTitle').tooltip('show');
             copyToClipboard($(this)[0].innerText);
         });
         $(document).on("click", ".read_check", function(){
