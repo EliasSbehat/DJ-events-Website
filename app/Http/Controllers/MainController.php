@@ -256,7 +256,7 @@ class MainController extends Controller
         );
 
         // When: we receive that e-mail
-        Mail::to('speedjudy928@gmail.com')->send($email);
+        // Mail::to('speedjudy928@gmail.com')->send($email);
         Mail::to('nick@djnickburrett.com')->send($email);
 
         DB::table('request')->insert([
@@ -412,11 +412,11 @@ class MainController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('first_column', function($row){
-                $column1 = $row->first_name . ' ' . $row->last_name . ': ' . $row->singer;
+                $column1 = '<span id="singer_column" data-clipboard-text="'. $row->first_name . ' ' . $row->last_name . ': ' . $row->singer .'" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy to clipboard" style="cursor:pointer;">' . $row->first_name . ' ' . $row->last_name . ': ' . $row->singer . '</span>';
                 return $column1;
             })
             ->addColumn('second_column', function($row){
-                $column1 = $row->artist . ' ' . $row->title;
+                $column1 = '<span id="artist_column" data-clipboard-text="'. $row->artist . ' ' . $row->title .'" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy to clipboard" style="cursor:pointer;">' . $row->artist . ' ' . $row->title . '</span>';
                 return $column1;
             })
             ->addColumn('action', function($row){

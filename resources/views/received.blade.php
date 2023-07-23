@@ -4,6 +4,7 @@
 <head>
     @include('layout.head')
     <title>Received Requests</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.3.0/ZeroClipboard.min.js"></script>
 </head>
 
 <body>
@@ -31,9 +32,6 @@
 
     <script>
         getSongs();
-        // setInterval(() => {
-            
-        // }, 1000);
         function getSongs() {
             // showLoading();
             var table = $('#table_id').DataTable({
@@ -61,6 +59,21 @@
                 table.ajax.reload(null, false);
             }, 5000);
         }
+        function copyToClipboard(text) {
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val(text).select();
+            document.execCommand("copy");
+            $temp.remove();
+        }
+        $(document).on("click", "#singer_column", function(){
+            $(this).attr('title', 'Copied!').tooltip('_fixTitle').tooltip('show');
+            copyToClipboard($(this)[0].innerText);
+        });
+        $(document).on("click", "#artist_column", function(){
+            $(this).attr('title', 'Copied!').tooltip('_fixTitle').tooltip('show');
+            copyToClipboard($(this)[0].innerText);
+        });
         $(document).on("click", ".read_check", function(){
             console.log($(this)[0].checked);
             var id = $(this).attr("id");
