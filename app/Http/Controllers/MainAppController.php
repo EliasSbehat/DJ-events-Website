@@ -91,14 +91,15 @@ class MainAppController extends Controller
         $limit = $request->input('limit');
         $to = $from*1 + $limit*1;
         $searchQuery = $request->input('searchQuery');
-        $searchArys = explode(" ",$searchQuery);
-        $searchAry = array_reverse($searchArys);
+        // $searchAry = array_reverse($searchArys);
         $data = DB::table('songs')
             ->select('*')
-            ->where(function ($query) use ($searchAry) {
-                foreach ($searchAry as $searchItem) {
-                    $query->where('artist', 'like', '%' . $searchItem . '%')
-                        ->orWhere('title', 'like', '%' . $searchItem . '%');
+            ->where(function ($query) use ($searchQuery) {
+                $searchArys = explode(" ",$searchQuery);
+                if ($searchQuery) {
+                    foreach ($searchArys as $titleItem) {
+                        $query->where(DB::raw('CONCAT(title, " ", artist)'), 'like', '%' . $titleItem . '%');
+                    }
                 }
             })
             ->offset($from)
@@ -297,8 +298,10 @@ class MainAppController extends Controller
                 ->where('request.date', 'like', '%'.$currentDate.'%')
                 ->where(function ($query) use ($searchAry) {
                     foreach ($searchAry as $searchItem) {
-                        $query->where('artist', 'like', '%' . $searchItem . '%')
-                            ->orWhere('title', 'like', '%' . $searchItem . '%');
+                        // $query->where('artist', 'like', '%' . $searchItem . '%')
+                        //     ->orWhere('title', 'like', '%' . $searchItem . '%');
+
+                        $query->where(DB::raw('CONCAT(title, " ", artist)'), 'like', '%' . $searchItem . '%');
                     }
                 })
                 ->offset($from)
@@ -311,8 +314,9 @@ class MainAppController extends Controller
                 ->where('request.date', 'not like', '%'.$currentDate.'%')
                 ->where(function ($query) use ($searchAry) {
                     foreach ($searchAry as $searchItem) {
-                        $query->orWhere('title', 'like', '%' . $searchItem . '%')
-                            ->orWhere('artist', 'like', '%' . $searchItem . '%');
+                        $query->where(DB::raw('CONCAT(title, " ", artist)'), 'like', '%' . $searchItem . '%');
+                        // $query->orWhere('title', 'like', '%' . $searchItem . '%')
+                        //     ->orWhere('artist', 'like', '%' . $searchItem . '%');
                     }
                 })
                 ->offset($from)
