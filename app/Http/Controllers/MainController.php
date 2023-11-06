@@ -109,6 +109,9 @@ class MainController extends Controller
             ->get();
         if (count($data)) {
             echo "success";
+            DB::table('users')->where('remember_token', $token)->update([
+                'verified' => 1
+            ]);
             session(['user-id' => $data[0]->id]);
             session(['phone' => $data[0]->phone]);
             session(['name' => $data[0]->first_name.' '.$data[0]->last_name]);
