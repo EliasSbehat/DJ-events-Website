@@ -64,6 +64,16 @@ class MainAppController extends Controller
             echo "wrong user";
         }
     }
+    public function checkuserByphone(Request $request)
+    {
+        $phone = $request->input('phone');
+        $user = DB::table('users')->where('phone', $phone)->first();
+        if (!$user) {
+            echo "no-user";
+        } else {
+            echo "success";
+        }
+    }
     public function verifyCode(Request $request)
     {
         $input = $request->post();

@@ -18,6 +18,7 @@ use App\Http\Controllers\MainAppController;
 
 Route::controller(MainAppController::class)->group(function () {
     Route::get('/signin/checkuser', 'checkuser');
+    Route::get('/signin/checkuserbyPhone', 'checkuserByphone');
     Route::get('/verify/code', 'verifyCode');
     Route::get('/songmng/get', 'songGet');
     Route::get('/songmng/get-loadmore', 'songGetLoadMore');
