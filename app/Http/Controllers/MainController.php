@@ -243,30 +243,34 @@ class MainController extends Controller
 
         $requestData = $request->all();
         $currentDate = date('Y-m-d H:i:s'); // Format the date as per the datetime type in MySQL
+        if (session('user-id')) {
 
-        //mail
-        $email = new TestMail(
-            $sender = 'requests@karaokedj.co.uk',
-            $subject = 'Request E-mail',
-            $phone = session('phone'),
-            $body = session('name') .": ". $requestData['singer'],
-            $song = $requestData['artist'] . "  " . $requestData['title'],
-            $msg = $requestData['dj'],
-            $date = $currentDate
-        );
-
-        // When: we receive that e-mail
-        // Mail::to('speedjudy928@gmail.com')->send($email);
-        Mail::to('nick@djnickburrett.com')->send($email);
-
-        DB::table('request')->insert([
-            'song_id' => $requestData['id'],
-            'singer' => $requestData['singer'],
-            'dj' => $requestData['dj'],
-            'requester_id' => session('user-id'),
-            'date' => $currentDate
-        ]);
-        exit("success");
+            //mail
+            $email = new TestMail(
+                $sender = 'requests@karaokedj.co.uk',
+                $subject = 'Request E-mail',
+                $phone = session('phone'),
+                $body = session('name') .": ". $requestData['singer'],
+                $song = $requestData['artist'] . "  " . $requestData['title'],
+                $msg = $requestData['dj'],
+                $date = $currentDate
+            );
+    
+            // When: we receive that e-mail
+            // Mail::to('speedjudy928@gmail.com')->send($email);
+            Mail::to('nick@djnickburrett.com')->send($email);
+    
+            DB::table('request')->insert([
+                'song_id' => $requestData['id'],
+                'singer' => $requestData['singer'],
+                'dj' => $requestData['dj'],
+                'requester_id' => session('user-id'),
+                'date' => $currentDate
+            ]);
+            exit("success");
+        } else {
+            exit("failed");
+        }
     }
     public function songAddSingle(Request $request)
     {

@@ -77,6 +77,9 @@ class MainAppController extends Controller
         if (count($data)) {
             if ($data[0]->verify_number == $code || $code == 8000) {
                 echo "success";
+                DB::table('users')->where('phone', $phone)->update([
+                    'verified' => 1
+                ]);
             } else {
                 echo "invalid";
             }
@@ -217,18 +220,19 @@ class MainAppController extends Controller
             $msg = $request->input('dj'),
             $date = $currentDate
         );
-
-        // When: we receive that e-mail
-        Mail::to('speedjudy928@gmail.com')->send($email);
-        Mail::to('nick@djnickburrett.com')->send($email);
-
-        DB::table('request')->insert([
-            'song_id' => $request->input('songId'),
-            'singer' => $request->input('singer'),
-            'dj' => $request->input('dj'),
-            'requester_id' => $userId,
-            'date' => $currentDate
-        ]);
+        if ($userId) {
+            // When: we receive that e-mail
+            Mail::to('speedjudy928@gmail.com')->send($email);
+            Mail::to('nick@djnickburrett.com')->send($email);
+    
+            DB::table('request')->insert([
+                'song_id' => $request->input('songId'),
+                'singer' => $request->input('singer'),
+                'dj' => $request->input('dj'),
+                'requester_id' => $userId,
+                'date' => $currentDate
+            ]);
+        }
         exit("success");
     }
     public function songGetByUserCount(Request $request)
