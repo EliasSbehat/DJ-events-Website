@@ -16,52 +16,56 @@ class MainAppController extends Controller
         $first_name = $request->input('first_name');
         $last_name = $request->input('last_name');
         $phone = $request->input('phone');
-        if ($phone[0]=="+") {
-            $phone = substr($phone, 1);
-        }
-        $randomNumber = mt_rand(1000, 9999);
-        $user = DB::table('users')->where('phone', $phone)->first();
-        if (!$user) {
-            DB::table('users')->insert([
-                'first_name' => $first_name,
-                'last_name' => $last_name,
-                'verify_number' => $randomNumber,
-                'phone' => $phone
-            ]);
-        }
-        $user = DB::table('users')->where('phone', $phone)->first();
-
-        $token = md5($phone . "_@123Col_" . $first_name . time());
-        $sms_api_key = config('app.sms_key');
-        if ($user) {
-            // if ($user->verified) {
-            DB::table('users')->where('phone', $phone)->update([
-                'remember_token' => $token,
-                'verify_number' => $randomNumber
-            ]);
+        if (strlen($phone)>3 && $first_name && $last_name) {
+            if ($phone[0]=="+") {
+                $phone = substr($phone, 1);
+            }
+            $randomNumber = mt_rand(1000, 9999);
+            $user = DB::table('users')->where('phone', $phone)->first();
+            if (!$user) {
+                DB::table('users')->insert([
+                    'first_name' => $first_name,
+                    'last_name' => $last_name,
+                    'verify_number' => $randomNumber,
+                    'phone' => $phone
+                ]);
+            }
+            $user = DB::table('users')->where('phone', $phone)->first();
+    
+            $token = md5($phone . "_@123Col_" . $first_name . time());
+            $sms_api_key = config('app.sms_key');
+            if ($user) {
+                // if ($user->verified) {
+                DB::table('users')->where('phone', $phone)->update([
+                    'remember_token' => $token,
+                    'verify_number' => $randomNumber
+                ]);
+                
+                $numbers = array($phone);
+                $sender = urlencode('karaokedj');
+                $message = rawurlencode("Verify Code: " . $randomNumber);
             
-            $numbers = array($phone);
-            $sender = urlencode('karaokedj');
-            $message = rawurlencode("Verify Code: " . $randomNumber);
-        
-            $numbers = implode(',', $numbers);
-        
-            $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
-        
-            // Send the POST request with cURL
-            $ch = curl_init('https://api.txtlocal.com/send/');
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $response = curl_exec($ch);
-            curl_close($ch);
-
-            echo $phone; exit();
-            // } else {
-            //     echo "not verified";
-            // }
+                $numbers = implode(',', $numbers);
+            
+                $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
+            
+                // Send the POST request with cURL
+                $ch = curl_init('https://api.txtlocal.com/send/');
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $response = curl_exec($ch);
+                curl_close($ch);
+    
+                print_r(json_encode([$phone, $user])); exit();
+                // } else {
+                //     echo "not verified";
+                // }
+            } else {
+                echo "wrong user";
+            }
         } else {
-            echo "wrong user";
+            echo "invalid input";
         }
     }
     public function checkuserByphone(Request $request)
