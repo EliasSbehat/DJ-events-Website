@@ -223,7 +223,7 @@ class MainAppController extends Controller
         }
         $input = $request->post();
         $currentDate = date('Y-m-d H:i:s'); // Format the date as per the datetime type in MySQL
-        $singerStr = (!$request->input('singer') || strpos($request->input('singer'), 'null')>-1) ? "" : $request->input('singer');
+		$singerStr = (!$request->input('singer') || strpos($request->input('singer'), 'null')>-1) ? "" : $request->input('singer');
         //mail
         $email = new TestMail(
             $sender = 'requests@karaokedj.co.uk',

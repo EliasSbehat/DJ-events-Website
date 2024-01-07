@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
 use Illuminate\Support\Facades\Http;
 use DataTables;
+use App\Services\SMSService;
 
 class MainController extends Controller
 {
@@ -16,12 +17,13 @@ class MainController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    protected $smsService;
+
+
     public function index()
     {
-        //
         return view('home');
     }
-
     public function signin()
     {
         return view('signin');
@@ -29,6 +31,9 @@ class MainController extends Controller
     public function signup()
     {
         return view('signup');
+    }
+    public function test(){
+        die('test');
     }
     public function register(Request $request)
     {
@@ -52,25 +57,12 @@ class MainController extends Controller
         session(['phone' => $input['phone']]);
         // Message details
         $numbers = array($input['phone']);
-        $sender = urlencode('karaokedj');
         $message = rawurlencode($randomNumber);
-    
-        $numbers = implode(',', $numbers);
-    
-        $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
-    
-        // Send the POST request with cURL
-        $ch = curl_init('https://api.txtlocal.com/send/');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-		
-        // Send the POST request with cURL
-        
-        // Process your response here
-        // echo $response; 
+
+        $sms = new SMSService();
+        foreach($numbers as $number){
+            $sms->send($number, $message);
+        }
 
         return redirect("/verify");
     }
@@ -87,7 +79,7 @@ class MainController extends Controller
             ->select('*')
             ->where('phone', $phone)
             ->get();
-        
+
         if (count($data)) {
             if ($data[0]->verify_number == $code) {
                 DB::table('users')->where('phone', $phone)->update([
@@ -109,7 +101,7 @@ class MainController extends Controller
             ->get();
         if (count($data)) {
             echo "success";
-            DB::table('users')->where('remember_token', $token)->update([
+			DB::table('users')->where('remember_token', $token)->update([
                 'verified' => 1
             ]);
             session(['user-id' => $data[0]->id]);
@@ -162,7 +154,6 @@ class MainController extends Controller
         $token = md5($phone . "_@123Col_" . $first_name . time());
         $host = request()->getSchemeAndHttpHost();
         $link = 'Click here to request karaoke. ' . $host . '/auth'. '/'. $token;
-        $sms_api_key = config('app.sms_key');
         if ($user) {
             // if ($user->verified) {
             DB::table('users')->where('phone', $phone)->update([
@@ -176,20 +167,12 @@ class MainController extends Controller
 
 
             $numbers = array($phone);
-            $sender = urlencode('karaokedj');
-            $message = rawurlencode($link);
-        
-            $numbers = implode(',', $numbers);
-        
-            $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
-        
-            // Send the POST request with cURL
-            $ch = curl_init('https://api.txtlocal.com/send/');
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $response = curl_exec($ch);
-            curl_close($ch);
+            $message = $link;
+            $sms = new SMSService();
+
+            foreach($numbers as $number){
+                $sms->send($number, $message);
+            }
 
             echo $token;
             // } else {
@@ -247,7 +230,7 @@ class MainController extends Controller
         $requestData = $request->all();
         $currentDate = date('Y-m-d H:i:s'); // Format the date as per the datetime type in MySQL
         if (session('user-id')) {
-            $singerStr = (!$requestData['singer'] || strpos($requestData['singer'], 'null')>-1) ? "" : $requestData['singer'];
+			$singerStr = (!$requestData['singer'] || strpos($requestData['singer'], 'null')>-1) ? "" : $requestData['singer'];
             //mail
             $email = new TestMail(
                 $sender = 'requests@karaokedj.co.uk',
@@ -258,14 +241,13 @@ class MainController extends Controller
                 $msg = $requestData['dj'],
                 $date = $currentDate
             );
-    
+
             // When: we receive that e-mail
-            // Mail::to('speedjudy928@gmail.com')->send($email);
-            Mail::to('nick@djnickburrett.com')->send($email);
-    
+            Mail::to('requests@karaokedj.co.uk')->send($email);
+
             DB::table('request')->insert([
                 'song_id' => $requestData['id'],
-                'singer' => $singerStr,
+                'singer' => $requestData['singer'],
                 'dj' => $requestData['dj'],
                 'requester_id' => session('user-id'),
                 'date' => $currentDate
@@ -299,8 +281,8 @@ class MainController extends Controller
         $data = DB::table('songs')
             ->select('*')
             ->get();
-        
-        print_r(json_encode($data)); 
+
+        print_r(json_encode($data));
         exit();
     }
     public function songGetS()
@@ -336,8 +318,8 @@ class MainController extends Controller
         $data = DB::table('request_setting')
             ->select('*')
             ->get();
-        
-        print_r(json_encode($data)); 
+
+        print_r(json_encode($data));
         exit();
     }
     public function getRequestSettingSet(Request $request)
@@ -349,9 +331,9 @@ class MainController extends Controller
         ]);
         exit();
     }
-    
-    
-    public function songGetByUser(Request $request) 
+
+
+    public function songGetByUser(Request $request)
     {
         $userId = session('user-id');
         $today = $request->input('today');
@@ -369,11 +351,11 @@ class MainController extends Controller
                 ->where('request.date', 'not like', '%'.$currentDate.'%')
                 ->get();
         }
-        
-        print_r(json_encode($data)); 
+
+        print_r(json_encode($data));
         exit();
     }
-    public function songGetByUserS(Request $request) 
+    public function songGetByUserS(Request $request)
     {
         $userId = session('user-id');
         $today = $request->input('today');
@@ -408,7 +390,7 @@ class MainController extends Controller
                 ->make(true);
         }
     }
-    public function getRequestedSongs() 
+    public function getRequestedSongs()
     {
         $data = DB::table('request')
             ->join('songs', 'request.song_id', '=', 'songs.id')
