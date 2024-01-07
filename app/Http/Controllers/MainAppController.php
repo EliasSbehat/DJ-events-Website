@@ -7,9 +7,18 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
 use Illuminate\Support\Facades\Http;
+use App\Services\SMSService;
 
 class MainAppController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    protected $smsService;
+
+
     public function checkuser(Request $request)
     {
         $input = $request->post();
@@ -33,7 +42,7 @@ class MainAppController extends Controller
             $user = DB::table('users')->where('phone', $phone)->first();
     
             $token = md5($phone . "_@123Col_" . $first_name . time());
-            $sms_api_key = config('app.sms_key');
+            // $sms_api_key = config('app.sms_key');
             if ($user) {
                 // if ($user->verified) {
                 DB::table('users')->where('phone', $phone)->update([
@@ -46,16 +55,19 @@ class MainAppController extends Controller
                 $message = rawurlencode("Verify Code: " . $randomNumber);
             
                 $numbers = implode(',', $numbers);
+                $sms = new SMSService();
+                foreach($numbers as $number){
+                    $sms->send($number, $message);
+                }
+                // $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
             
-                $data = array('apikey' => $sms_api_key, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
-            
-                // Send the POST request with cURL
-                $ch = curl_init('https://api.txtlocal.com/send/');
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $response = curl_exec($ch);
-                curl_close($ch);
+                // // Send the POST request with cURL
+                // $ch = curl_init('https://api.txtlocal.com/send/');
+                // curl_setopt($ch, CURLOPT_POST, true);
+                // curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                // $response = curl_exec($ch);
+                // curl_close($ch);
     
                 print_r(json_encode([$phone, $user])); exit();
                 // } else {
