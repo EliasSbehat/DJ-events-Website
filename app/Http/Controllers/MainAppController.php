@@ -223,25 +223,24 @@ class MainAppController extends Controller
         }
         $input = $request->post();
         $currentDate = date('Y-m-d H:i:s'); // Format the date as per the datetime type in MySQL
-
+        $singerStr = (!$request->input('singer') || strpos($request->input('singer'), 'null')>-1) ? "" : $request->input('singer');
         //mail
         $email = new TestMail(
             $sender = 'requests@karaokedj.co.uk',
             $subject = 'Request E-mail',
             $phone = $request->input('phone'),
-            $body = $userName .": ". $request->input('singer'),
+            $body = $userName .": ". $singerStr,
             $song = $request->input('artist') . "  " . $request->input('title'),
             $msg = $request->input('dj'),
             $date = $currentDate
         );
         if ($userId) {
             // When: we receive that e-mail
-            Mail::to('speedjudy928@gmail.com')->send($email);
-            Mail::to('nick@djnickburrett.com')->send($email);
+            Mail::to('requests@karaokedj.co.uk')->send($email);
     
             DB::table('request')->insert([
                 'song_id' => $request->input('songId'),
-                'singer' => $request->input('singer'),
+                'singer' => $singerStr,
                 'dj' => $request->input('dj'),
                 'requester_id' => $userId,
                 'date' => $currentDate

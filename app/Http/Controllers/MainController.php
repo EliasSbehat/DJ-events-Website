@@ -247,13 +247,13 @@ class MainController extends Controller
         $requestData = $request->all();
         $currentDate = date('Y-m-d H:i:s'); // Format the date as per the datetime type in MySQL
         if (session('user-id')) {
-
+            $singerStr = (!$requestData['singer'] || strpos($requestData['singer'], 'null')>-1) ? "" : $requestData['singer'];
             //mail
             $email = new TestMail(
                 $sender = 'requests@karaokedj.co.uk',
                 $subject = 'Request E-mail',
                 $phone = session('phone'),
-                $body = session('name') .": ". $requestData['singer'],
+                $body = session('name') .": ". $singerStr,
                 $song = $requestData['artist'] . "  " . $requestData['title'],
                 $msg = $requestData['dj'],
                 $date = $currentDate
@@ -265,7 +265,7 @@ class MainController extends Controller
     
             DB::table('request')->insert([
                 'song_id' => $requestData['id'],
-                'singer' => $requestData['singer'],
+                'singer' => $singerStr,
                 'dj' => $requestData['dj'],
                 'requester_id' => session('user-id'),
                 'date' => $currentDate
@@ -419,7 +419,9 @@ class MainController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('first_column', function($row){
-                $column1 = '<span id="singer_column" data-clipboard-text="'. $row->first_name . ' ' . $row->last_name . ': ' . $row->singer .'" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy to clipboard" style="cursor:pointer;">' . $row->first_name . ' ' . $row->last_name . ': ' . $row->singer . '</span>';
+                $singer = $row->singer;
+                $singerStr = (!$singer || strpos($singer, 'null')>-1) ? "" : $singer;
+                $column1 = '<span id="singer_column" data-clipboard-text="'. $row->first_name . ' ' . $row->last_name . ': ' . $singerStr .'" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy to clipboard" style="cursor:pointer;">' . $row->first_name . ' ' . $row->last_name . ': ' . $singerStr . '</span>';
                 return $column1;
             })
             ->addColumn('second_column', function($row){
