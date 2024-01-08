@@ -54,7 +54,6 @@ class MainAppController extends Controller
                 $sender = urlencode('karaokedj');
                 $message = rawurlencode("Verify Code: " . $randomNumber);
             
-                $numbers = implode(',', $numbers);
                 $sms = new SMSService();
                 foreach($numbers as $number){
                     $sms->send($number, $message);
